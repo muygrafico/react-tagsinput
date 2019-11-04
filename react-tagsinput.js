@@ -408,6 +408,30 @@
         this._addTags(tags);
       }
     }, {
+      key: 'autoInputTagTimeout',
+      value: function autoInputTagTimeout(e) {
+        var _this4 = this;
+
+        e.persist(); // Prevent Warning: Synthetic event is reused for performance reasons
+        if (this.timeout) clearTimeout(this.timeout);
+
+        this.timeout = setTimeout(function () {
+          _this4.doAdd(e);
+        }, this.props.autoInputTime);
+      }
+    }, {
+      key: 'doAdd',
+      value: function doAdd(e) {
+        var tag = this._tag();
+        var added = this.accept();
+        var empty = tag === '';
+        var keyCode = e.keyCode;
+
+        if (this._shouldPreventDefaultEventOnAdd(added, empty, keyCode)) {
+          e.preventDefault();
+        }
+      }
+    }, {
       key: 'handleKeyDown',
       value: function handleKeyDown(e) {
         if (e.defaultPrevented) {
@@ -427,10 +451,11 @@
         var remove = removeKeys.indexOf(keyCode) !== -1 || removeKeys.indexOf(key) !== -1;
 
         if (add) {
-          var added = this.accept();
-          if (this._shouldPreventDefaultEventOnAdd(added, empty, keyCode)) {
-            e.preventDefault();
-          }
+          this.doAdd(e);
+        }
+
+        if (this.props.autoInputTime) {
+          this.autoInputTagTimeout(e);
         }
 
         if (remove && value.length > 0 && empty) {
@@ -563,7 +588,7 @@
     }, {
       key: 'render',
       value: function render() {
-        var _this4 = this;
+        var _this5 = this;
 
         var _props6 = this.props,
             value = _props6.value,
@@ -577,6 +602,7 @@
             className = _props6.className,
             focusedClassName = _props6.focusedClassName,
             addOnBlur = _props6.addOnBlur,
+            autoInputTagTimeout = _props6.autoInputTagTimeout,
             addOnPaste = _props6.addOnPaste,
             inputProps = _props6.inputProps,
             pasteSplit = _props6.pasteSplit,
@@ -588,7 +614,7 @@
             tagDisplayProp = _props6.tagDisplayProp,
             inputValue = _props6.inputValue,
             onChangeInput = _props6.onChangeInput,
-            other = _objectWithoutProperties(_props6, ['value', 'onChange', 'tagProps', 'renderLayout', 'renderTag', 'renderInput', 'addKeys', 'removeKeys', 'className', 'focusedClassName', 'addOnBlur', 'addOnPaste', 'inputProps', 'pasteSplit', 'onlyUnique', 'maxTags', 'validate', 'validationRegex', 'disabled', 'tagDisplayProp', 'inputValue', 'onChangeInput']);
+            other = _objectWithoutProperties(_props6, ['value', 'onChange', 'tagProps', 'renderLayout', 'renderTag', 'renderInput', 'addKeys', 'removeKeys', 'className', 'focusedClassName', 'addOnBlur', 'autoInputTagTimeout', 'addOnPaste', 'inputProps', 'pasteSplit', 'onlyUnique', 'maxTags', 'validate', 'validationRegex', 'disabled', 'tagDisplayProp', 'inputValue', 'onChangeInput']);
 
         var isFocused = this.state.isFocused;
 
@@ -601,15 +627,15 @@
           return renderTag(_extends({
             key: index,
             tag: tag,
-            onRemove: _this4.handleRemove.bind(_this4),
+            onRemove: _this5.handleRemove.bind(_this5),
             disabled: disabled,
-            getTagDisplayValue: _this4._getTagDisplayValue.bind(_this4)
+            getTagDisplayValue: _this5._getTagDisplayValue.bind(_this5)
           }, tagProps));
         });
 
         var inputComponent = renderInput(_extends({
           ref: function ref(r) {
-            _this4.input = r;
+            _this5.input = r;
           },
           value: this._tag(),
           onPaste: this.handlePaste.bind(this),
@@ -623,7 +649,7 @@
         return _react2.default.createElement(
           'div',
           { ref: function ref(r) {
-              _this4.div = r;
+              _this5.div = r;
             }, onClick: this.handleClick.bind(this), className: className },
           renderLayout(tagComponents, inputComponent)
         );

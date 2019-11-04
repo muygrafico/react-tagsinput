@@ -6,6 +6,7 @@ import Autosuggest from 'react-autosuggest'
 import AutosizeInput from 'react-input-autosize'
 
 import SimpleExample from "./components/simple";
+import AutoInputTagTimeout from "./components/autoinputtagtimeout";
 import AutosizeExample from "./components/autosize";
 import AutocompleteExample from "./components/autocomplete";
 import EmailExample from "./components/email";
@@ -23,6 +24,9 @@ class Examples extends React.Component {
       <div>
         <h2>Simple</h2>
         <SimpleExample />
+        <hr />
+        <h2>Auto input tag (after 1000ms)</h2>
+        <AutoInputTagTimeout />
         <hr />
         <h2>Auto size</h2>
         <AutosizeExample />
