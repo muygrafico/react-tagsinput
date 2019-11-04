@@ -303,6 +303,26 @@ class TagsInput extends React.Component {
     this._addTags(tags)
   }
 
+  autoInputTagTimeout (e) {
+    e.persist() // Prevent Warning: Synthetic event is reused for performance reasons
+    if (this.timeout) clearTimeout(this.timeout)
+
+    this.timeout = setTimeout(() => {
+      this.doAdd(e)
+    }, this.props.autoInputTime)
+  }
+
+  doAdd (e) {
+    const tag = this._tag()
+    let added = this.accept()
+    let empty = tag === ''
+    let keyCode = e.keyCode
+
+    if (this._shouldPreventDefaultEventOnAdd(added, empty, keyCode)) {
+      e.preventDefault()
+    }
+  }
+
   handleKeyDown (e) {
     if (e.defaultPrevented) {
       return
@@ -317,10 +337,11 @@ class TagsInput extends React.Component {
     let remove = removeKeys.indexOf(keyCode) !== -1 || removeKeys.indexOf(key) !== -1
 
     if (add) {
-      let added = this.accept()
-      if (this._shouldPreventDefaultEventOnAdd(added, empty, keyCode)) {
-        e.preventDefault()
-      }
+      this.doAdd(e)
+    }
+
+    if (this.props.autoInputTime) {
+      this.autoInputTagTimeout(e)
     }
 
     if (remove && value.length > 0 && empty) {
@@ -449,6 +470,7 @@ class TagsInput extends React.Component {
       className,
       focusedClassName,
       addOnBlur,
+      autoInputTagTimeout,
       addOnPaste,
       inputProps,
       pasteSplit,
