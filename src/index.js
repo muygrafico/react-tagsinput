@@ -111,6 +111,7 @@ class TagsInput extends React.Component {
     onlyUnique: PropTypes.bool,
     value: PropTypes.array.isRequired,
     maxTags: PropTypes.number,
+    minAutoInputLength: PropTypes.number,
     validate: PropTypes.func,
     validationRegex: PropTypes.instanceOf(RegExp),
     disabled: PropTypes.bool,
@@ -304,11 +305,17 @@ class TagsInput extends React.Component {
   }
 
   autoInputTagTimeout (e) {
+    let {minAutoInputLength} = this.props
+
     e.persist() // Prevent Warning: Synthetic event is reused for performance reasons
     if (this.timeout) clearTimeout(this.timeout)
 
     this.timeout = setTimeout(() => {
-      this.doAdd(e)
+      if (minAutoInputLength && e.target.value.length >= minAutoInputLength) {
+        this.doAdd(e)
+      } else if (!minAutoInputLength) {
+        this.doAdd(e)
+      }
     }, this.props.autoInputTime)
   }
 

@@ -13,7 +13,7 @@ class AutoInputTagTimeout extends React.Component {
   }
 
   render () {
-    return <TagsInput autoInputTime={1000} value={this.state.tags} onChange={::this.handleChange} />
+    return <TagsInput minAutoInputLength={3} autoInputTime={1000} value={this.state.tags} onChange={::this.handleChange} />
   }
 }
 
