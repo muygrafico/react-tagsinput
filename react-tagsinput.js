@@ -412,11 +412,18 @@
       value: function autoInputTagTimeout(e) {
         var _this4 = this;
 
+        var minAutoInputLength = this.props.minAutoInputLength;
+
+
         e.persist(); // Prevent Warning: Synthetic event is reused for performance reasons
         if (this.timeout) clearTimeout(this.timeout);
 
         this.timeout = setTimeout(function () {
-          _this4.doAdd(e);
+          if (minAutoInputLength && e.target.value.length >= minAutoInputLength) {
+            _this4.doAdd(e);
+          } else if (!minAutoInputLength) {
+            _this4.doAdd(e);
+          }
         }, this.props.autoInputTime);
       }
     }, {

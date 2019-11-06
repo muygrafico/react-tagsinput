@@ -112,6 +112,7 @@ class TagsInput extends React.Component {
     value: PropTypes.array.isRequired,
     maxTags: PropTypes.number,
     minAutoInputLength: PropTypes.number,
+    minInputLength: PropTypes.number,
     validate: PropTypes.func,
     validationRegex: PropTypes.instanceOf(RegExp),
     disabled: PropTypes.bool,
@@ -335,7 +336,7 @@ class TagsInput extends React.Component {
       return
     }
 
-    let {value, removeKeys, addKeys} = this.props
+    let {value, removeKeys, addKeys, minInputLength} = this.props
     const tag = this._tag()
     let empty = tag === ''
     let keyCode = e.keyCode
@@ -344,7 +345,11 @@ class TagsInput extends React.Component {
     let remove = removeKeys.indexOf(keyCode) !== -1 || removeKeys.indexOf(key) !== -1
 
     if (add) {
-      this.doAdd(e)
+      if (minInputLength && e.target.value.length >= minInputLength) {
+        this.doAdd(e)
+      } else if (!minInputLength) {
+        this.doAdd(e)
+      }
     }
 
     if (this.props.autoInputTime) {
